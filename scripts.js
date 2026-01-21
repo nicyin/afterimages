@@ -116,7 +116,7 @@ fetch('blues.json')
       let canScroll = false;
       setTimeout(() => {
         canScroll = true;
-      }, 800);
+      }, 1500);
       
       const handleScroll = (e) => {
         if (!canScroll) {
