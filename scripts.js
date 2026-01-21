@@ -46,9 +46,8 @@ fetch('blues.json')
       
       function showNextWord() {
         if (wordIndex >= words.length) {
-          // All words shown - keep white text and full color background
           setTimeout(() => {
-            // Enable scrolling - ready for next scroll
+            // enable scroll
             isAnimating = false;
           }, 500);
           return;
@@ -140,7 +139,7 @@ fetch('blues.json')
           fadeWords(item.hex);
           currentIndex++;
           showPhoto(currentIndex);
-          // remove scroll listener
+
           window.removeEventListener('wheel', handleScroll);
         }
       };
