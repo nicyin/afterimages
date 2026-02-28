@@ -3,13 +3,13 @@ fetch('blues.json')
   .then(data => {
     const shuffleData = data.sort(() => Math.random() - 0.5);
     
-    let currentIndex = 0;
-    let wordElements = [];
-    let isAnimating = false;
-    let isShowingImage = true;
+    let current = 0;
+    let allwords = [];
+    let animating = false;
+    let showing_image = true;
     
     function toggleGrid(show) {
-      wordElements.forEach(el => {
+      allwords.forEach(el => {
         if (el.classList.contains('faded') || el.classList.contains('color-tile')) {
           el.style.display = show ? 'block' : 'none';
         }
@@ -17,7 +17,7 @@ fetch('blues.json')
     }
     
     function fadeWords(color) {
-      wordElements.forEach(el => {
+      allwords.forEach(el => {
         if (!el.classList.contains('color-tile')) {
           el.style.color = color;
         }
@@ -30,52 +30,56 @@ fetch('blues.json')
     function animateWords(text, color) {
       const words = text.split(' ');
       let wordIndex = 0;
-      let previousY = null;
+      let lastY = null;
       
-      const isMobile = window.innerWidth < 768;
-      const minWidth = isMobile ? window.innerWidth * 0.7 : window.innerWidth * 0.3;
-      const maxWidth = window.innerWidth * 0.9;
+      // mobile check
+      let ismobile = window.innerWidth < 768;
+      let min_width = ismobile ? window.innerWidth * 0.73 : window.innerWidth * 0.32;
+      let max_width = window.innerWidth * 0.88;
       
+      // trying to scale based on text length
       const charRatio = Math.min((text.length - 20) / 80, 1);
-      const totalWidth = minWidth + (maxWidth - minWidth) * Math.max(charRatio, 0);
+      const totalWidth = min_width + (max_width - min_width) * Math.max(charRatio, 0);
       
       const startX = (window.innerWidth - totalWidth) / 2;
       const wordSpacing = totalWidth / (words.length + 1);
-      const msPerWord = 300;
+      let wordtime = 280; 
       
       document.body.style.backgroundColor = color;
 
+      // color square at start of each sentence
       const tile = document.createElement('div');
       tile.className = 'color-tile';
       tile.style.backgroundColor = color;
       document.body.appendChild(tile);
-      wordElements.push(tile);
+      allwords.push(tile);
       
       function showNextWord() {
         if (wordIndex >= words.length) {
           setTimeout(() => {
-            isAnimating = false;
-          }, 500);
+            animating = false;
+          }, 480);
           return;
         }
         
         const word = words[wordIndex];
         const x = startX + wordSpacing * (wordIndex + 1);
         
-        const minY = isMobile ? window.innerHeight * 0.1 : window.innerHeight * 0.3;
-        const maxY = isMobile ? window.innerHeight * 0.9 : window.innerHeight * 0.7;
-        const maxVariation = isMobile ? 150 : 100;
+        // vertical positioning - more spread on mobile
+        const minY = ismobile ? window.innerHeight * 0.12 : window.innerHeight * 0.28;
+        const maxY = ismobile ? window.innerHeight * 0.87 : window.innerHeight * 0.72;
+        const jumpsize = ismobile ? 145 : 95;
         
         let y;
-        if (previousY === null) {
+        if (lastY === null) {
           y = minY + Math.random() * (maxY - minY);
         } else {
-          const constraintMin = Math.max(minY, previousY - maxVariation);
-          const constraintMax = Math.min(maxY, previousY + maxVariation);
+          const constraintMin = Math.max(minY, lastY - jumpsize);
+          const constraintMax = Math.min(maxY, lastY + jumpsize);
           y = constraintMin + Math.random() * (constraintMax - constraintMin);
         }
         
-        previousY = y;
+        lastY = y;
         
         const wordEl = document.createElement('div');
         wordEl.className = 'word';
@@ -83,9 +87,10 @@ fetch('blues.json')
         wordEl.style.left = x + 'px';
         wordEl.style.top = y + 'px';
         document.body.appendChild(wordEl);
-        wordElements.push(wordEl);
+        allwords.push(wordEl);
         
-        const delay = msPerWord * (1 + (Math.random() - 0.5) * 0.2);
+        // random variation in timing so it feels more natural
+        const delay = wordtime * (1 + (Math.random() - 0.5) * 0.18);
         
         wordIndex++;
         setTimeout(showNextWord, delay);
@@ -94,17 +99,18 @@ fetch('blues.json')
       showNextWord();
     }
     
+    // arrange everything into grid
     function makeGrid() {
-      if (wordElements.length === 0) return;
+      if (allwords.length === 0) return;
       
-      const totalWords = wordElements.length;
+      const total = allwords.length;
       const aspectRatio = window.innerWidth / window.innerHeight;
-      const cols = Math.ceil(Math.sqrt(totalWords * aspectRatio));
-      const rows = Math.ceil(totalWords / cols);
+      const cols = Math.ceil(Math.sqrt(total * aspectRatio));
+      const rows = Math.ceil(total / cols);
       const cellWidth = window.innerWidth / cols;
       const cellHeight = window.innerHeight / rows;
       
-      wordElements.forEach((el, index) => {
+      allwords.forEach((el, index) => {
         const col = index % cols;
         const row = Math.floor(index / cols);
         el.style.left = (col + 0.5) * cellWidth + 'px';
@@ -130,19 +136,20 @@ fetch('blues.json')
       div.appendChild(img);
       document.body.appendChild(div);
       
-      isShowingImage = true;
+      showing_image = true;
 
       div.addEventListener('click', () => {
-        if (!isShowingImage) return;
+        if (!showing_image) return;
 
-        div.style.transform = 'translate(-50%, -50%) scale(2)';
+        // zoom and fade out
+        div.style.transform = 'translate(-50%, -50%) scale(1.95)';
         div.style.transition = 'transform 0.2s ease-out, opacity 0.2s ease-out';
         div.style.opacity = '0';
         
         document.body.style.backgroundColor = item.hex;
         
-        isShowingImage = false;
-        isAnimating = true;
+        showing_image = false;
+        animating = true;
         
         toggleGrid(false);
         
@@ -153,11 +160,11 @@ fetch('blues.json')
       });
       
       const handleClick = () => {
-        if (isAnimating || isShowingImage) return;
+        if (animating || showing_image) return;
         
         fadeWords(item.hex);
-        currentIndex++;
-        showPhoto(currentIndex);
+        current++;
+        showPhoto(current);
         window.removeEventListener('click', handleClick);
       };
       
@@ -165,5 +172,5 @@ fetch('blues.json')
       window.addEventListener('touchend', handleClick);
     }
     
-    showPhoto(currentIndex);
+    showPhoto(current);
   });
