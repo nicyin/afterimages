@@ -73,6 +73,15 @@ body {
   transition: opacity 0.3s ease;
 }
 
+.color-tile.faded {
+  opacity: 0.2;
+  animation: none;
+}
+
+.color-tile.faded:hover {
+  opacity: 1;
+}
+
 @media (max-width: 768px) {
   body {
     font-size: 14px;
