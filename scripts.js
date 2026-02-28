@@ -46,9 +46,11 @@ fetch('blues.json')
       
       // total char length
       const sentenceLength = text.length;
-
-      const minWidth = window.innerWidth * 0.3;
-      const maxWidth = window.innerWidth * 0.9;
+      
+      // mobile detect
+      const isMobile = window.innerWidth < 768;
+      const minWidth = isMobile ? window.innerWidth * 0.7 : window.innerWidth * 0.3;
+      const maxWidth = isMobile ? window.innerWidth * 0.9 : window.innerWidth * 0.9;
       
       // width based on sentence length
       const charRatio = Math.min((sentenceLength - 20) / 80, 1);
@@ -62,8 +64,7 @@ fetch('blues.json')
       const msPerWord = 300;
       
       document.body.style.backgroundColor = color;
-      
-      // Create color tile before first word
+
       const tileEl = document.createElement('div');
       tileEl.className = 'color-tile';
       tileEl.style.backgroundColor = color;
@@ -82,17 +83,17 @@ fetch('blues.json')
         const word = words[wordIndex];
         const x = startX + xSpacing * (wordIndex + 1);
         
-        // y position
-        const screenMinY = window.innerHeight * 0.3;
-        const screenMaxY = window.innerHeight * 0.7;
+        const screenMinY = isMobile ? window.innerHeight * 0.1 : window.innerHeight * 0.3;
+        const screenMaxY = isMobile ? window.innerHeight * 0.9 : window.innerHeight * 0.7;
         
         let y;
         if (previousY === null) {
           y = screenMinY + Math.random() * (screenMaxY - screenMinY);
         } else {
-          // within 200px
-          const constraintMin = Math.max(screenMinY, previousY - 100);
-          const constraintMax = Math.min(screenMaxY, previousY + 100);
+
+          const maxVariation = isMobile ? 150 : 100;
+          const constraintMin = Math.max(screenMinY, previousY - maxVariation);
+          const constraintMax = Math.min(screenMaxY, previousY + maxVariation);
           y = constraintMin + Math.random() * (constraintMax - constraintMin);
         }
         
