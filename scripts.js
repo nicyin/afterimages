@@ -40,7 +40,7 @@ fetch('blues.json')
       const totalWidth = minWidth + (maxWidth - minWidth) * Math.max(charRatio, 0);
       
       const startX = (window.innerWidth - totalWidth) / 2;
-      const xSpacing = totalWidth / (words.length + 1);
+      const wordSpacing = totalWidth / (words.length + 1);
       const msPerWord = 300;
       
       document.body.style.backgroundColor = color;
@@ -60,7 +60,7 @@ fetch('blues.json')
         }
         
         const word = words[wordIndex];
-        const x = startX + xSpacing * (wordIndex + 1);
+        const x = startX + wordSpacing * (wordIndex + 1);
         
         const minY = isMobile ? window.innerHeight * 0.1 : window.innerHeight * 0.3;
         const maxY = isMobile ? window.innerHeight * 0.9 : window.innerHeight * 0.7;
