@@ -10,9 +10,28 @@ fetch('blues.json')
     let isAnimating = false; // track word animation
     let isShowingImage = true; // track current state
     
+    function hideGrid() {
+      wordElements.forEach(el => {
+        if (el.classList.contains('faded') || el.classList.contains('color-tile')) {
+          el.style.display = 'none';
+        }
+      });
+    }
+    
+    function showGrid() {
+      wordElements.forEach(el => {
+        if (el.classList.contains('faded') || el.classList.contains('color-tile')) {
+          el.style.display = 'block';
+        }
+      });
+    }
+    
     function fadeWords(color) {
       wordElements.forEach(el => {
-        el.style.color = color;
+        if (!el.classList.contains('color-tile')) {
+          // Only set color for words, not tiles
+          el.style.color = color;
+        }
         el.classList.add('faded');
       });
       
@@ -43,6 +62,13 @@ fetch('blues.json')
       const msPerWord = 300;
       
       document.body.style.backgroundColor = color;
+      
+      // Create color tile before first word
+      const tileEl = document.createElement('div');
+      tileEl.className = 'color-tile';
+      tileEl.style.backgroundColor = color;
+      document.body.appendChild(tileEl);
+      wordElements.push(tileEl);
       
       function showNextWord() {
         if (wordIndex >= words.length) {
@@ -91,11 +117,39 @@ fetch('blues.json')
       showNextWord();
     }
     
+    //changing words into grid
+    function arrangeWordsInGrid() {
+      if (wordElements.length === 0) return;
+      
+      const totalWords = wordElements.length;
+    
+      const aspectRatio = window.innerWidth / window.innerHeight;
+      const cols = Math.ceil(Math.sqrt(totalWords * aspectRatio));
+      const rows = Math.ceil(totalWords / cols);
+    
+      const cellWidth = window.innerWidth / cols;
+      const cellHeight = window.innerHeight / rows;
+      
+      wordElements.forEach((el, index) => {
+        const col = index % cols;
+        const row = Math.floor(index / cols);
+        const x = (col + 0.5) * cellWidth;
+        const y = (row + 0.5) * cellHeight;
+        
+        el.style.left = x + 'px';
+        el.style.top = y + 'px';
+      });
+    }
+    
     function showPhoto(index) {
       if (index >= shuffleData.length) {
-        console.log('All photos viewed!');
         return;
       }
+      
+      arrangeWordsInGrid();
+      showGrid();
+
+      //adding new img
       
       const item = shuffleData[index];
       
@@ -110,41 +164,45 @@ fetch('blues.json')
       document.body.appendChild(div);
       
       isShowingImage = true;
-      
-      // delay before scroll
-      let canScroll = false;
-      setTimeout(() => {
-        canScroll = true;
-      }, 1500);
-      
-      const handleScroll = (e) => {
-        if (!canScroll) {
-          return;
-        }
+
+      div.addEventListener('click', () => {
+        if (!isShowingImage) return;
+
+        div.style.transform = 'translate(-50%, -50%) scale(2)';
+        div.style.transition = 'transform 0.2s ease-out, opacity 0.2s ease-out';
+        div.style.opacity = '0';
         
-        e.preventDefault();
+        document.body.style.backgroundColor = item.hex;
         
+        isShowingImage = false;
+        isAnimating = true;
+        
+        hideGrid();
+        
+        setTimeout(() => {
+          div.remove();
+          animateWords(item.my_description, item.hex);
+        }, 200);
+      });
+      
+      //next image
+      const handleClick = () => {
         if (isAnimating) {
           return;
         }
         
-        if (isShowingImage) {
-          // start animation
-          div.remove();
-          isShowingImage = false;
-          isAnimating = true;
-          animateWords(item.my_description, item.hex);
-        } else {
-          // animation end
+        if (!isShowingImage) {
+          // animation finish
           fadeWords(item.hex);
+          
           currentIndex++;
           showPhoto(currentIndex);
-
-          window.removeEventListener('wheel', handleScroll);
+          
+          window.removeEventListener('click', handleClick);
         }
       };
       
-      window.addEventListener('wheel', handleScroll, { passive: false });
+      window.addEventListener('click', handleClick);
     }
     
     showPhoto(currentIndex);

@@ -12,12 +12,18 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+  will-change: transform, opacity;
+  z-index: 100;
 }
 
 .image img {
   display: block;
   max-width: 400px;
   height: auto;
+}
+
+.image img:hover {
+  transform: scale(1.02);
 }
 
 .word {
@@ -28,7 +34,7 @@ body {
   font-family: "Arial Narrow", Arial, sans-serif;
   color: #ffffff;
   pointer-events: none;
-  z-index: -1;
+  z-index: 1;
   opacity: 0;
   animation: fadeIn 0.3s ease forwards;
   transition: color 0.5s ease, opacity 0.5s ease;
@@ -53,4 +59,25 @@ body {
   opacity: 0.2;
   animation: none;
   text-shadow: none;
+}
+
+.color-tile {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  pointer-events: auto;
+  z-index: 1;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+  transition: opacity 0.3s ease;
+}
+
+.color-tile.faded {
+  opacity: 0.2;
+  animation: none;
+}
+
+.color-tile.faded:hover {
+  opacity: 1;
 }
