@@ -94,7 +94,7 @@ fetch('blues.json')
       showNextWord();
     }
     
-    function arrangeWordsInGrid() {
+    function makeGrid() {
       if (wordElements.length === 0) return;
       
       const totalWords = wordElements.length;
@@ -115,7 +115,7 @@ fetch('blues.json')
     function showPhoto(index) {
       if (index >= shuffleData.length) return;
       
-      arrangeWordsInGrid();
+      makeGrid();
       toggleGrid(true);
       
       const item = shuffleData[index];
@@ -162,6 +162,7 @@ fetch('blues.json')
       };
       
       window.addEventListener('click', handleClick);
+      window.addEventListener('touchend', handleClick);
     }
     
     showPhoto(currentIndex);
