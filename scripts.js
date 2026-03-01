@@ -58,6 +58,7 @@ fetch('blues.json')
         if (wordIndex >= words.length) {
           setTimeout(() => {
             animating = false;
+            //document.body.classList.add('clickable');
           }, 480);
           return;
         }
@@ -65,7 +66,7 @@ fetch('blues.json')
         const word = words[wordIndex];
         const x = startX + wordSpacing * (wordIndex + 1);
         
-        // vertical positioning - more spread on mobile
+        // vertical positioning (mobile spread)
         const minY = ismobile ? window.innerHeight * 0.12 : window.innerHeight * 0.28;
         const maxY = ismobile ? window.innerHeight * 0.87 : window.innerHeight * 0.72;
         const jumpsize = ismobile ? 145 : 95;
@@ -119,6 +120,7 @@ fetch('blues.json')
     }
     
     function showPhoto(index) {
+      window.showPhoto = showPhoto;
       if (index >= shuffleData.length) return;
       
       makeGrid();
@@ -137,6 +139,7 @@ fetch('blues.json')
       document.body.appendChild(div);
       
       showing_image = true;
+      //document.body.classList.remove('clickable');
 
       div.addEventListener('click', () => {
         if (!showing_image) return;
