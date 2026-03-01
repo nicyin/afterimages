@@ -1,3 +1,6 @@
+console.log(
+  'Afterimages revisits color as an artifact of memory. While scrolling through my camera roll quickly one day, I noticed there were massive blocks of blue all over. What were the blues trying to capture?'
+)
 fetch('blues.json')
   .then(response => response.json())
   .then(data => {
