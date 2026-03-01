@@ -36,13 +36,12 @@ fetch('blues.json')
       let ismobile = window.innerWidth < 768;
       let min_width = ismobile ? window.innerWidth * 0.73 : window.innerWidth * 0.32;
       let max_width = window.innerWidth * 0.88;
+
+      const chars = Math.min((text.length - 20) / 80, 1);
+      const textwidth = min_width + (max_width - min_width) * Math.max(chars, 0);
       
-      // trying to scale based on text length
-      const charRatio = Math.min((text.length - 20) / 80, 1);
-      const totalWidth = min_width + (max_width - min_width) * Math.max(charRatio, 0);
-      
-      const startX = (window.innerWidth - totalWidth) / 2;
-      const wordSpacing = totalWidth / (words.length + 1);
+      const startX = (window.innerWidth - textwidth) / 2;
+      const wordspace = textwidth / (words.length + 1);
       let wordtime = 280; 
       
       document.body.style.backgroundColor = color;
@@ -64,9 +63,9 @@ fetch('blues.json')
         }
         
         const word = words[wordIndex];
-        const x = startX + wordSpacing * (wordIndex + 1);
+        const x = startX + wordspace * (wordIndex + 1);
         
-        // vertical positioning (mobile spread)
+        // vertical positioning (mobile)
         const minY = ismobile ? window.innerHeight * 0.12 : window.innerHeight * 0.28;
         const maxY = ismobile ? window.innerHeight * 0.87 : window.innerHeight * 0.72;
         const jumpsize = ismobile ? 145 : 95;
@@ -90,7 +89,7 @@ fetch('blues.json')
         document.body.appendChild(wordEl);
         allwords.push(wordEl);
         
-        // random variation in timing so it feels more natural
+        // tikming variation
         const delay = wordtime * (1 + (Math.random() - 0.5) * 0.18);
         
         wordIndex++;
@@ -99,8 +98,7 @@ fetch('blues.json')
       
       showNextWord();
     }
-    
-    // arrange everything into grid
+
     function makeGrid() {
       if (allwords.length === 0) return;
       
@@ -108,14 +106,14 @@ fetch('blues.json')
       const aspectRatio = window.innerWidth / window.innerHeight;
       const cols = Math.ceil(Math.sqrt(total * aspectRatio));
       const rows = Math.ceil(total / cols);
-      const cellWidth = window.innerWidth / cols;
-      const cellHeight = window.innerHeight / rows;
+      const cellW = window.innerWidth / cols;
+      const cellH = window.innerHeight / rows;
       
       allwords.forEach((el, index) => {
         const col = index % cols;
         const row = Math.floor(index / cols);
-        el.style.left = (col + 0.5) * cellWidth + 'px';
-        el.style.top = (row + 0.5) * cellHeight + 'px';
+        el.style.left = (col + 0.5) * cellW + 'px';
+        el.style.top = (row + 0.5) * cellH + 'px';
       });
     }
     
