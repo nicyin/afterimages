@@ -6,9 +6,9 @@ body {
   transition: background 0.5s ease;
 }
 
-body.clickable {
+/*body.clickable {
   cursor: pointer !important;
-}
+}*/
 
 .image {
   position: fixed;
@@ -25,6 +25,7 @@ body.clickable {
   display: block;
   max-width: 400px;
   height: auto;
+  cursor: pointer;
 }
 
 .image img:hover {

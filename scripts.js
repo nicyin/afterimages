@@ -61,7 +61,7 @@ fetch('blues.json')
         if (wordIndex >= words.length) {
           setTimeout(() => {
             animating = false;
-            //document.body.classList.add('clickable');
+            document.body.classList.add('clickable');
           }, 480);
           return;
         }
@@ -141,7 +141,7 @@ fetch('blues.json')
       document.body.appendChild(div);
       
       showing_image = true;
-      //document.body.classList.remove('clickable');
+      document.body.classList.remove('clickable');
 
       div.addEventListener('click', () => {
         if (!showing_image) return;
